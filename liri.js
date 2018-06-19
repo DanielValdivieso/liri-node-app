@@ -22,12 +22,17 @@ var client = new Twitter({
 
   });
    
-  var params = {screen_name: 'nodejs'};
-  client.get('statuses/user_timeline', params, function(error, tweets, response) {
-    if (!error) {
-      console.log(tweets);
-    }
-  });
+  function getTweets(){
+    client.get('statuses/home_timeline',{count:4}, function(error, tweets, response) {
+       for(i=0;i<4;i++){
+        console.log(tweets[i].created_at+" : "+tweets[i].text);
+       }
+       if(error){
+           console.log(error);
+       }
+       write("my-tweets()\n")
+     });
+    };
 
 var movieName = process.argv[2];
 
