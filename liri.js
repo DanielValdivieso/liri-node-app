@@ -1,6 +1,9 @@
 // Load exports from keys.js file which has Twitter auth keys
+require("dotenv").config();
 var keys = require("./keys.js");
-var twitterCredentials = keys.twitterKeys;
+var skeys=require('./skeys.js');
+var twitterCredentials = skeys;
+var spotifyCredentils = keys.spotify;
 
 // node liri.js [ command ] [ query - optional ]
 var command = process.argv[2];
@@ -13,12 +16,8 @@ var myTweets = function() {
 	var Twitter = require('twitter');
 
 	// From exports of keys.js file
-	var client = new Twitter({
-		consumer_key: twitterCredentials.consumer_key,
-		consumer_secret: twitterCredentials.consumer_secret,
-		access_token_key: twitterCredentials.access_token_key,
-		access_token_secret: twitterCredentials.access_token_secret
-	});
+	console.log(twitterCredentials);
+	var client = new Twitter(twitterCredentials);
 
 	// Twitter API parameters
 	var params = {
@@ -29,7 +28,7 @@ var myTweets = function() {
 	// GET request for last 20 tweets on my account's timeline
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
 		if(error) { // if there IS an error
-			console.log('Error occurred: ' + error);
+			console.log(error);
 		} else { // if there is NO error
 	  	console.log("My 20 Most Recent Tweets");
 	  	console.log("");
@@ -45,8 +44,8 @@ var myTweets = function() {
 
 var spotifyThisSong = function(trackQuery) {
 	// Load Spotify npm package
-	var spotify = require('spotify');
-
+	var s = require('node-spotify-api');
+	var spotify = new s(spotifyCredentils);
 	// if no trackQuery is passed in, then we will be querying for this particular song
 	if(trackQuery === undefined) {
 		trackQuery = "the sign ace of base";
@@ -55,7 +54,7 @@ var spotifyThisSong = function(trackQuery) {
 	// Spotify API request (if an object is returned, output the first search result's artist(s), song, preview link, and album)
 	spotify.search({ type: 'track', query: trackQuery }, function(error, data) {
 	    if(error) { // if error
-	        console.log('Error occurred: ' + error);
+	        console.log(error);
 	    } else { // if no error
 	    	// For loop is for when a track has multiple artists
 				for(var i = 0; i < data.tracks.items[0].artists.length; i++) {
